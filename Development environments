@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.27;
+
+contract SushiRouter99 {
+    string public name;
+    
+    // Event to track contract deployments
+    event Deployed(string name);
+
+    // Event for swaps (for testing purposes)
+    event SwapExecuted(address indexed sender, uint amountIn, uint amountOut);
+
+    constructor() {
+        name = "SushiswapRouter";
+        emit Deployed(name);
+    }
+
+    // Function to mock 'getAmountsOut' (simply returns amountIn * 2 for path of length 2)
+    function getAmountsOut(uint amountIn, address[] memory path) public pure returns (uint[] memory amounts) {
+        // Ensure path has at least two tokens
+        require(path.length >= 2, "Path must contain at least two addresses");
+
+        amounts = new uint[](path.length);  // Corrected: Initialize the array with the correct size
+        amounts[0] = amountIn;        // The input amount
+        amounts[1] = amountIn * 2;    // Mock the output (input * 2)
+    }
+
+    // Mock function for swapping ETH for tokens
+    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable {
+        require(msg.value > 0, "Must send ETH");
+        require(path.length >= 2, "Invalid path");
+
+        // Emit event for testing purposes
+        emit SwapExecuted(msg.sender, msg.value, amountOutMin);
+
+        // No real swap logic here, mock behavior
+    }
+
+    // Mock function for swapping tokens for ETH
+    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external {
+        require(amountIn > 0, "Must send tokens");
+        require(path.length >= 2, "Invalid path");
+
+        // Emit event for testing purposes
+        emit SwapExecuted(msg.sender, amountIn, amountOutMin);
+
+        // No real swap logic here, mock behavior
+    }
+
+    // Fallback function to accept ETH
+    fallback() external payable {}
+
+    // Receive function to accept ETH
+    receive() external payable {}
+}
